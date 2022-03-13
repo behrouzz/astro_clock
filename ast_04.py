@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 #from mpl_toolkits.mplot3d.axes3d import Axes3D
 
 lon, lat = (48.58313582900411, 7.744083817548831)
-loc = EarthLocation(lon=lon, lat=lat+40)
+lat, lon = 6.1256, 1.2254
+loc = EarthLocation(lon=lon, lat=-60)
 
 time_window = [datetime(2022, 12, 11, i) for i in range(24)]
 T = Time(time_window)
