@@ -8,6 +8,8 @@ from hypatie.plots import plot_xyz
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, RegularPolygon, Wedge
 import ephem
+from hypatie.coordinates import RAdeg
+from hypatie.time import get_lst
 
 def get_noon(lon, lat):
     o = ephem.Observer()
@@ -46,6 +48,12 @@ x1, y1 = [0, pos_now[1]], [0, pos_now[2]]
 ax.plot(x1, y1, c='r')#marker = 'o')
 
 
+# LST
+lst = RAdeg(get_lst(datetime.utcnow(), lon))
+lst_str = str(lst.h).zfill(2) + ':' + \
+          str(lst.m).zfill(2) + ':' + \
+          str(round(lst.s)).zfill(2)
+
 ax.scatter(pos[:,1], pos[:,2], c='y', alpha=0.5)
 ax.scatter(pos_now[1], pos_now[2], c='r')
 ax.hlines(y=0, xmin=-1, xmax=1, linewidth=2, color='k')
@@ -56,4 +64,5 @@ ax.set_ylim(-1,1)
 #plt.axis('off')
 ax.set_xticks([])
 ax.set_yticks([])
+plt.title('LST: ' + lst_str)
 plt.show()
