@@ -38,7 +38,7 @@ altaz = AltAz(obstime=T, location=loc)
 s = get_body('sun', T, loc).transform_to(altaz)
 pos = s.cartesian.xyz.to('au').value.T
 
-
+print(pos)
 fig, ax = plt.subplots()
 
 cir = Circle((0, 0), 1, alpha=0.2)
