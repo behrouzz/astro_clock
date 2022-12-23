@@ -37,7 +37,7 @@ noon = t_utc - dt
 print(noon)
 
 def get_noon_exact(t, lon, lat):
-    t = datetime(t.year, t.month, t.day, 12)
+    t = t + timedelta(hours=(lon/15)) 
     import ephem
     o = ephem.Observer()
     o.lat, o.long = str(lat), str(lon)
