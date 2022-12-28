@@ -1,12 +1,33 @@
-from datetime import datetime, timedelta
 import numpy as np
-from hypatie.earth import geodetic_to_geocentric
+from datetime import datetime, timedelta, time
+from hypatie.time import get_lst, get_noon, solar_time, get_eot
 import spiceypy as sp
-import matplotlib.pyplot as plt
-from matplotlib.patches import Circle, RegularPolygon, Wedge
+from hypatie.earth import geodetic_to_geocentric
+from hypatie.transform import sph2car
 
 
 km2au = 6.684587122268446e-09
+
+class Clock:
+    def __init__(self, t, lon):
+        self.t = t
+        self.lon = lon
+        self.mean_solar_time, self.true_solar_time = \
+                              solar_time(self.t, self.lon)
+        self.noon = get_noon(self.t, self.lon)
+        self.equation_of_time = get_eot(self.t)
+        self.lst_deg = get_lst(self.t, self.lon)
+        self.lst = self.__format_lst()
+
+    def __format_lst(self):
+        td = timedelta(hours=self.lst_deg/15)
+        a = str(td).split(':')
+        h = int(a[0])
+        m = int(a[1])
+        s = int(a[-1].split('.')[0])
+        ms = int(a[-1].split('.')[1])
+        return time(h,m,s,ms)
+        
 
 def get_t_win(t0, steps, dt=2):
     t1 = t0 - timedelta(seconds=3600*dt)
@@ -37,6 +58,7 @@ def apparent_sun(t, obs_loc, kernels):
     sp.kclear()
     return pos
 
+
 def apparent_sun_window(t_win, obs_loc, kernels):
     r2d = 180/np.pi
     
@@ -58,33 +80,10 @@ def apparent_sun_window(t_win, obs_loc, kernels):
     return pos
 
 
-def plot_clock(pos, pos_now, title=""):
-    fig, ax = plt.subplots()
-
-    cir = Circle((0, 0), 1, alpha=0.2)
-    ax.add_artist(cir)
-    
-    ls = [(0,30), (60,90), (120,150), (180,210), (240,270), (300,330)]
-
-    tmp = [*range(0, 360, 15)]
-    ls = [*zip(tmp[::2], tmp[1:][::2])]
-
-    for i in ls:
-        wg = Wedge(0, 1, i[0], i[1], alpha=0.2)
-        ax.add_artist(wg)
-
-
-    ax.plot([0, pos_now[1]], [0, pos_now[2]], c='r')#, marker = 'o')
-
-    ax.scatter(pos[:,1], pos[:,2], c='y', alpha=0.5)
-    ax.scatter(pos_now[1], pos_now[2], c='r')
-    ax.hlines(y=0, xmin=-1, xmax=1, linewidth=2, color='k')
-    ax.vlines(x=0, ymin=-1, ymax=1, linewidth=0.5, color='k')
-    ax.set_aspect('equal')
-    ax.set_xlim(-1,1)
-    ax.set_ylim(-1,1)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    #plt.title(title)
-    fig.suptitle(title, fontsize=9)
-    return fig, ax
+def sun24(t, obs_loc, noon, kernels):
+    t24 = [noon + timedelta(hours=i) for i in range(24)]
+    sun = apparent_sun_window(t24, obs_loc, kernels)
+    pos = sph2car(sun) * km2au
+    pos_now = apparent_sun(t, obs_loc, kernels)
+    pos_now = sph2car(pos_now) * km2au
+    return pos, pos_now
