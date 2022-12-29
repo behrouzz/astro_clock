@@ -1,6 +1,6 @@
 import numpy as np
 from datetime import datetime, timedelta, time
-from hypatie.time import get_lst, get_noon, solar_time, get_eot
+from hypatie.time import get_lst, get_noon, solar_time
 import spiceypy as sp
 from hypatie.earth import geodetic_to_geocentric
 from hypatie.transform import sph2car
@@ -15,7 +15,8 @@ class Clock:
         self.mean_solar_time, self.true_solar_time = \
                               solar_time(self.t, self.lon)
         self.noon = get_noon(self.t, self.lon)
-        self.equation_of_time = get_eot(self.t)
+        self.eot = (self.mean_solar_time - self.true_solar_time).total_seconds()/60
+        self.eot_str = self.__format_eot()
         self.lst_deg = get_lst(self.t, self.lon)
         self.lst = self.__format_lst()
 
@@ -27,7 +28,19 @@ class Clock:
         s = int(a[-1].split('.')[0])
         ms = int(a[-1].split('.')[1])
         return time(h,m,s,ms)
-        
+
+
+    def __format_eot(self):
+        sign = '-' if self.eot<0 else '+'
+        td = timedelta(minutes=abs(self.eot))
+        a = str(td).split(':')
+        h = int(a[0])
+        m = int(a[1])
+        s = int(a[-1].split('.')[0])
+        ms = int(a[-1].split('.')[1])
+        minsec = str(time(h,m,s,ms))[3:]#.split('.')[0]
+        return sign + minsec
+
 
 def get_t_win(t0, steps, dt=2):
     t1 = t0 - timedelta(seconds=3600*dt)
