@@ -57,4 +57,6 @@ fig, ax = plot_clock(pos, pos_now, title=title)
 plt.show()
 ```
 
-![alt text](https://github.com/behrouzz/astronomy/raw/main/images/sun_position.jpg)
+<p align="center">
+  <img src="https://github.com/behrouzz/astronomy/raw/main/images/sun_position.jpg" />
+</p>
