@@ -1,5 +1,4 @@
 **Author:** [Behrouz Safari](https://astrodatascience.net/)<br/>
-**License:** [MIT](https://opensource.org/licenses/MIT)<br/>
 
 # astro_clock
 *Astronomical clock*
