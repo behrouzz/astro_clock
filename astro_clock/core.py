@@ -9,7 +9,7 @@ from hypatie.transform import sph2car
 km2au = 6.684587122268446e-09
 
 class Clock:
-    def __init__(self, t, lon):
+    def __init__(self, t, lon=0):
         self.t = t
         self.lon = lon
         self.mean_solar_time, self.true_solar_time = \
