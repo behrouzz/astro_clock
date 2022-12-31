@@ -4,7 +4,7 @@
 *Astronomical clock*
 
 
-## Example 1: Live clock
+## Example 1: Live clock with matplotlib
 
 You can simply play the live clock by passing the longtitude to an instance of LiveClock.
 
@@ -18,7 +18,22 @@ ac.show()
 ![alt text](https://github.com/behrouzz/astronomy/raw/main/images/anim_clock.jpg)
 
 
-## Apparent positions of sun
+## Example 2: Live clock with plotly and dash
+
+The live clock in the above example can be created using plotly and dash. The source code is in the file *ex2_dash_live_clock.py*. If you have already installed plotly and dash, you can go to the command line and run the program:
+
+    python ex2_dash_live_clock.py
+
+Then, open your browser and go to this address: 
+
+    http://127.0.0.1:8050/
+
+You can enter your longtitude in the input box of the webpage.
+
+![alt text](https://github.com/behrouzz/astronomy/raw/main/images/dash_live_clock.png)
+
+
+## Example 3: Apparent positions of sun
 
 Get a plot showing the position of sun now and during 24 hours.
 
