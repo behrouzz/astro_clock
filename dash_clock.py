@@ -1,7 +1,7 @@
 import numpy as np
 from datetime import datetime
 import plotly.graph_objects as go
-#from plotly.subplots import make_subplots
+from plotly.subplots import make_subplots
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
@@ -46,12 +46,13 @@ def angles(t):
 app = dash.Dash()
 
 app.layout = html.Div([
-    dcc.Graph(id='chart'),
-    dcc.Interval(id='interval', interval=1*1000, n_intervals=0),
     dcc.Input(
             id="lon", type="number", placeholder="Longtitude",
-            min=-360, max=360, step=0.5,
+            min=-360, max=360#, step=0.5,
         ),
+    dcc.Graph(id='chart'),
+    dcc.Interval(id='interval', interval=1*1000, n_intervals=0),
+
 ])
 
 
@@ -66,19 +67,42 @@ def update_plot(n, lon):
         lon = 0
         
     c = Clock(datetime.utcnow(), lon)
-    t = c.mean_solar_time
+    mst = c.mean_solar_time
+    tst = c.true_solar_time
+    lst = c.lst
 
-    theta_h, theta_m, theta_s = angles(t)
+    theta_h, theta_m, theta_s = angles(mst)
+    data_mst = []
+    data_mst.append(dial(theta_h, r_h))
+    data_mst.append(dial(theta_m, r_m))
+    data_mst.append(dial(theta_s, r_s))
 
-    
-    data = []
-    data.append(dial(theta_h, r_h))
-    data.append(dial(theta_m, r_m))
-    data.append(dial(theta_s, r_s))
+    theta_h, theta_m, theta_s = angles(tst)
+    data_tst = []
+    data_tst.append(dial(theta_h, r_h))
+    data_tst.append(dial(theta_m, r_m))
+    data_tst.append(dial(theta_s, r_s))
 
-    fig = go.Figure(data=data)
+    theta_h, theta_m, theta_s = angles(lst)
+    data_lst = []
+    data_lst.append(dial(theta_h, r_h))
+    data_lst.append(dial(theta_m, r_m))
+    data_lst.append(dial(theta_s, r_s))
+
+    fig = make_subplots(
+        rows=1, cols=3,
+        specs=[[{"type": "polar"}, {"type": "polar"}, {"type": "polar"}]],
+        )
+    #fig = go.Figure(data=data)
+    for i in data_mst:
+        fig.add_trace(i, row=1, col=1)
+    for i in data_tst:
+        fig.add_trace(i, row=1, col=2)
+    for i in data_lst:
+        fig.add_trace(i, row=1, col=3)
     fig.update_polars({'angularaxis':angularaxis, 'radialaxis':radialaxis})
-    fig.update_layout(title=f'Means solar time | Longtitude:{lon}', height=700, width=700, template='plotly_dark')
+    fig.update_layout(title=f'Means solar time | Longtitude:{lon}',
+                      height=500, width=500, template='plotly_dark')
     return fig
 
 
