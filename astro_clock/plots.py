@@ -41,7 +41,7 @@ def plot_clock(pos, pos_now, title=""):
 
 
 
-class AnimClock:
+class LiveClock:
     def __init__(self, lon=0):
         self.lon = lon
         self.fig = plt.figure()
@@ -52,6 +52,7 @@ class AnimClock:
     def show(self):
         ani = FuncAnimation(self.fig, self.__core, interval=1000)
         plt.tight_layout(pad=1, w_pad=0.9)
+        self.fig.suptitle(f'Longtitude: {self.lon}°', x=0.5, y=0.16)
         plt.show()
         
     def __clear(self):

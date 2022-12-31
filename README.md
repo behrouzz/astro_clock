@@ -6,12 +6,12 @@
 
 ## Example 1: Live clock
 
-You can simply play the live clock by passing the longtitude.
+You can simply play the live clock by passing the longtitude to an instance of LiveClock.
 
 ```python
-from astro_clock import AnimClock
+from astro_clock import LiveClock
 
-ac = AnimClock(lon=7.744083817548831)
+ac = LiveClock(lon=7.744083817548831)
 ac.show()
 ```
 
