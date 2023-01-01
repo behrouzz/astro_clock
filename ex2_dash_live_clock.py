@@ -33,10 +33,22 @@ radialaxis = {'tickvals':[],
 
 dc = {
     'hour'   : {'r':0.5, 'color':'black', 'width':5, 'mode':'lines'},
-    'minute' : {'r':0.8, 'color':'black', 'width':3, 'mode':'lines'},
+    'minute' : {'r':0.85,'color':'black', 'width':3, 'mode':'lines'},
     'second' : {'r':0.9, 'color':'black', 'width':1, 'mode':'lines'},
-    'lst_deg': {'r':0.9, 'color':'red',   'width':2, 'mode':'lines'},#+markers'},
+    'lst_deg': {'r':0.8, 'color':'red',   'width':2, 'mode':'lines+markers'},
     }
+
+aries = {
+    'font': {'color': 'red', 'size': 15},
+    'showarrow': False,
+    'text': '\u2648&#xFE0E;',
+    'x': 0.86,
+    'xanchor': 'center',
+    'xref': 'paper',
+    'y': 0.725,
+    'yanchor': 'bottom',
+    'yref': 'paper',
+}
 
 
 def dial(typ, theta):
@@ -47,7 +59,7 @@ def dial(typ, theta):
         showlegend=False,
         hoverinfo='skip',
         line={'color':dc[typ]['color'], 'width':dc[typ]['width']},
-        #marker={'symbol':'arrow-bar-up', 'angleref':'previous'},       
+        marker={'symbol':'arrow-bar-up', 'size':10, 'angleref':'previous'},       
         )
     return data
 
@@ -60,6 +72,9 @@ def angles(t):
     theta_m = m * 6
     theta_h = h * 30
     return theta_h, theta_m, theta_s
+
+
+
 
 # ============= RUN WITH DASH ================
 
@@ -131,6 +146,7 @@ def update_plot(n, lon):
         #title_y=0.5
         )
     
+    
     for i in data_mst:
         fig.add_trace(i, row=1, col=1)
     for i in data_tst:
@@ -148,19 +164,17 @@ def update_plot(n, lon):
         height=500, width=800, #template='plotly_dark',
         paper_bgcolor = "black",
                       )
-
-    # font of subplot titles
-    fig.update_annotations(
-        font={#'family':'Helvetica','size':14,
-            'color':'white'}
-        )
-
-    #fig.update_traces(marker_angleref='previous',selector=dict(type='scatterpolar'))
-
     
+    for i in range(3):
+        fig['layout']['annotations'][i].font.color = 'white'
+    fig.add_annotation(aries)    
     
     return fig
 
 
+
+##fig = update_plot(0,0)
+##fig.add_annotation(dc4)
+##a = fig['layout']['annotations']
 app.run_server(debug=True)
 
