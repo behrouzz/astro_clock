@@ -5,16 +5,15 @@ import spiceypy as sp
 from hypatie.earth import geodetic_to_geocentric
 from hypatie.transform import sph2car
 
-
 km2au = 6.684587122268446e-09
 
 class Clock:
-    def __init__(self, t, lon=0):
+    def __init__(self, t, lon=0, eot_df=None):
         self.t = t
         self.lon = lon
         self.mean_solar_time, self.true_solar_time = \
-                              solar_time(self.t, self.lon)
-        self.noon = get_noon(self.t, self.lon)
+                solar_time(t=self.t, lon=self.lon, eot_df=eot_df)
+        self.noon = get_noon(t=self.t, lon=self.lon, eot_df=eot_df)
         self.eot = (self.mean_solar_time - self.true_solar_time).total_seconds()/60
         self.eot_str = self.__format_eot()
         self.lst_deg = get_lst(self.t, self.lon)

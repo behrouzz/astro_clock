@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from datetime import datetime
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -6,7 +7,13 @@ import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
 from astro_clock import Clock
+from hypatie.time import download_eot_file
+import os
 
+
+if not os.path.isfile('eot_2020_2050.csv'):
+    download_eot_file()
+eot_df = pd.read_csv('eot_2020_2050.csv')
 
 angularaxis = {'direction': "clockwise",
                'rotation': 90,
@@ -25,9 +32,10 @@ radialaxis = {'tickvals':[],
               }
 
 dc = {
-    'hour'  : {'r':0.5, 'color':'black',   'width':5},
-    'minute': {'r':0.8, 'color':'black',  'width':3},
-    'second': {'r':0.9, 'color':'black', 'width':1},
+    'hour'   : {'r':0.5, 'color':'black', 'width':5, 'mode':'lines'},
+    'minute' : {'r':0.8, 'color':'black', 'width':3, 'mode':'lines'},
+    'second' : {'r':0.9, 'color':'black', 'width':1, 'mode':'lines'},
+    'lst_deg': {'r':0.9, 'color':'red',   'width':2, 'mode':'lines'},#+markers'},
     }
 
 
@@ -35,10 +43,11 @@ def dial(typ, theta):
     data = go.Scatterpolar(
         theta=[0, theta],
         r=[0, dc[typ]['r']],
-        mode='lines',
+        mode=dc[typ]['mode'],
         showlegend=False,
         hoverinfo='skip',
         line={'color':dc[typ]['color'], 'width':dc[typ]['width']},
+        #marker={'symbol':'arrow-bar-up', 'angleref':'previous'},       
         )
     return data
 
@@ -81,7 +90,7 @@ def update_plot(n, lon):
         lon = 0
 
     t = datetime.utcnow()
-    c = Clock(t, lon)
+    c = Clock(t=t, lon=lon, eot_df=eot_df)
     mst = c.mean_solar_time
     tst = c.true_solar_time
     lst = c.lst
@@ -103,6 +112,8 @@ def update_plot(n, lon):
     data_lst.append(dial('hour', theta_h))
     data_lst.append(dial('minute', theta_m))
     data_lst.append(dial('second', theta_s))
+
+    data_lst.append(dial('lst_deg', c.lst_deg))
 
     lst_deg = '{0:.3f}'.format(c.lst_deg)
     mst_title = f'Mean solar time:<br>{str(mst)[11:19]}'
@@ -143,6 +154,8 @@ def update_plot(n, lon):
         font={#'family':'Helvetica','size':14,
             'color':'white'}
         )
+
+    #fig.update_traces(marker_angleref='previous',selector=dict(type='scatterpolar'))
 
     
     
