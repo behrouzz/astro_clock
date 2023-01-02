@@ -30,7 +30,7 @@ Then, open your browser and go to this address:
 
 You can enter your longtitude in the input box of the webpage.
 
-![alt text](https://github.com/behrouzz/astronomy/raw/main/images/live_clock_dash.png)
+![alt text](https://github.com/behrouzz/astronomy/raw/main/images/dash_live_clock.png)
 
 
 ## Example 3: Apparent positions of sun
