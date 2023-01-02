@@ -3,12 +3,11 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.patches import Circle, RegularPolygon, Wedge
-from .core import Clock
-
-#km2au = 6.684587122268446e-09
+from .clock import Clock
 
 
-def plot_clock(pos, pos_now, title=""):
+
+def plot_sun(pos, pos_now, title=""):
     fig, ax = plt.subplots()
 
     cir = Circle((0, 0), 1, alpha=0.2)
