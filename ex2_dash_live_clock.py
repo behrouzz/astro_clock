@@ -10,6 +10,8 @@ from astro_clock import Clock
 from hypatie.time import download_eot_file
 import os
 
+GRwidth = 800
+GRheight = 500
 
 if not os.path.isfile('eot_2020_2050.csv'):
     download_eot_file()
@@ -59,7 +61,7 @@ def dial(typ, theta):
         showlegend=False,
         hoverinfo='skip',
         line={'color':dc[typ]['color'], 'width':dc[typ]['width']},
-        marker={'symbol':'arrow-bar-up', 'size':10, 'angleref':'previous'},       
+        marker={'symbol':'arrow-bar-up', 'size':10, 'angleref':'previous'},
         )
     return data
 
@@ -77,17 +79,23 @@ def angles(t):
 
 
 # ============= RUN WITH DASH ================
-
+head = 'Powered by: 𝓐𝓼𝓽𝓻𝓸𝓓𝓪𝓽𝓪𝓢𝓬𝓲𝓮𝓷𝓬𝓮.𝓷𝓮𝓽'
 
 app = dash.Dash()
 
 app.layout = html.Div([
-    html.Label('Longtitude: ', className='longtitude'),
+    html.Label('Longtitude: '),
     dcc.Input(
             id="lon", type="number",
             placeholder="Enter your longtitude...",
             min=-360, max=360,
+            style={'height':'30px', 'width':f'{GRwidth//4}px', "margin-right": f'{GRwidth//4}px'},
         ),
+    html.Label(head, style={'horizontal-align':'right',
+                                              'width':f'{GRwidth//4}px',
+                                              'font-size':'18px',
+                                              #'color':'blue', 
+                                              }),
     dcc.Graph(id='chart'),
     dcc.Interval(id='interval', interval=1*1000, n_intervals=0),
 
@@ -154,14 +162,18 @@ def update_plot(n, lon):
     for i in data_lst:
         fig.add_trace(i, row=1, col=3)
 
-    title = f'<b>Longtitude: {lon}°</b><br>GMT: {str(t)[:19]}'
+    tit1 = f'<b>Longtitude: {lon}°</b><br>'
+    tit2 = f'GMT: {str(t)[:19]}<br>'
+    tit3 = f'''<i>Equation of time: {c.eot_str[:-3].replace(":", "':")}"</i><br>'''
+    title = tit1 + tit2 + tit3
+    
     fig.update_polars({'angularaxis':angularaxis, 'radialaxis':radialaxis},
                       bgcolor='#A0A0A0', #bgcolor of subplots
                       )
     
     fig.update_layout(
         title={'text':title, 'x':0.5, 'y':0.1, 'font':{'color':'white'}},
-        height=500, width=800, #template='plotly_dark',
+        height=GRheight, width=GRwidth, #template='plotly_dark',
         paper_bgcolor = "black",
                       )
     
